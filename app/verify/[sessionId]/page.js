@@ -1,3 +1,5 @@
+"use client";
+
 import { useSession, signIn } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
