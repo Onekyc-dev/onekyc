@@ -1,4 +1,3 @@
-`javascript
 import "./globals.css";
 import Providers from "./providers";
 
