@@ -9,11 +9,12 @@ export async function POST() {
     return Response.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const result = await startDiditKyc({ userId: session.user.id });
+  const result = await startDiditKyc({ email: session.user.email });
 
   if (result.mock) {
     await markUserVerified(session.user.email);
+    return Response.json({ mock: true });
   }
 
-  return Response.json({ started: true });
+  return Response.json({ url: result.url });
 }
