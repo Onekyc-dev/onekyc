@@ -17,8 +17,14 @@ export default function VerifyPromptPage() {
 
   async function handleStartKyc() {
     setStarting(true);
-    await fetch("/api/kyc/start", { method: "POST" });
-    router.push("/kyc-processing");
+    const res = await fetch("/api/kyc/start", { method: "POST" });
+    const data = await res.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      router.push("/kyc-processing");
+    }
   }
 
   return (
