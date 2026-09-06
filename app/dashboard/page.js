@@ -1,8 +1,9 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import AppShell from "../../components/AppShell";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -22,43 +23,62 @@ export default function DashboardPage() {
 
   if (status !== "authenticated") return null;
 
+  const daysVerified = session.user.verifiedAt
+    ? Math.max(0, Math.floor((Date.now() - new Date(session.user.verifiedAt)) / 86400000))
+    : 0;
+
   return (
-    <main className="screen">
-      <div className="panel" style={{ textAlign: "left" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <img src="/logo-mark.png" alt="OneKYC" style={{ width: 34, height: 34 }} />
-            <span style={{ fontWeight: 600, fontSize: 14 }}>OneKYC</span>
-          </div>
-          <button className="btn-ghost" style={{ border: "none", background: "none", color: "var(--muted)", fontSize: 12, cursor: "pointer" }} onClick={() => signOut()}>
-            Sign out
-          </button>
+    <AppShell email={session.user.email}>
+      <div className="status-banner">
+        <div>
+          <p style={{ fontWeight: 600, fontSize: 15, color: "var(--success)" }}>Verified</p>
+          <p style={{ fontSize: 12, color: "var(--success)" }}>
+            Since {session.user.verifiedAt ? new Date(session.user.verifiedAt).toLocaleDateString() : "today"}
+          </p>
         </div>
+        <span style={{ fontSize: 11, fontFamily: "monospace", color: "var(--success)" }}>
+          {session.user.oneKycId}
+        </span>
+      </div>
 
-        <div className="badge success" style={{ marginBottom: 16 }}>
-          <div>
-            <p style={{ fontWeight: 600, fontSize: 14 }}>Verified</p>
-            <p style={{ fontSize: 12 }}>Since {session.user.verifiedAt ? new Date(session.user.verifiedAt).toLocaleDateString() : "today"}</p>
-            <p style={{ fontSize: 11, marginTop: 4, opacity: 0.7 }}>{session.user.oneKycId}</p>
-          </div>
+      <div className="stat-grid">
+        <div className="stat-card">
+          <p className="stat-label">dApps verified with</p>
+          <p className="stat-value">{history.length}</p>
         </div>
-
-        <p className="muted" style={{ marginBottom: 10, fontWeight: 600 }}>Verification history</p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          {history.length === 0 && (
-            <p className="muted">No dApps verified yet.</p>
-          )}
-          {history.map((h, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", border: "1px solid var(--line)", borderRadius: 10, padding: "10px 12px" }}>
-              <div>
-                <p style={{ fontSize: 13, fontWeight: 500 }}>{h.dappName}</p>
-                <p className="muted">{new Date(h.timestamp).toLocaleString()}</p>
-              </div>
-              <span style={{ color: "var(--success)" }}>✓</span>
-            </div>
-          ))}
+        <div className="stat-card">
+          <p className="stat-label">Verification age</p>
+          <p className="stat-value">{daysVerified}d</p>
         </div>
       </div>
-    </main>
+
+      <div className="teaser-card">
+        <div>
+          <p className="teaser-title">Share my identity</p>
+          <p className="teaser-sub">Coming soon</p>
+        </div>
+        <span style={{ fontSize: 20 }}>▦</span>
+      </div>
+
+      <div className="teaser-card">
+        <div>
+          <p className="teaser-title">Developer API</p>
+          <p className="teaser-sub">Coming soon</p>
+        </div>
+        <span style={{ fontSize: 20 }}>{"</>"}</span>
+      </div>
+
+      <p className="section-label">Verification history</p>
+      {history.length === 0 && <p className="muted">No dApps verified yet.</p>}
+      {history.map((h, i) => (
+        <div key={i} className="history-row">
+          <div>
+            <p style={{ fontSize: 13, fontWeight: 500 }}>{h.dappName}</p>
+            <p className="muted">{new Date(h.timestamp).toLocaleString()}</p>
+          </div>
+          <span style={{ color: "var(--success)" }}>✓</span>
+        </div>
+      ))}
+    </AppShell>
   );
 }
