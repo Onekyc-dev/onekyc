@@ -27,7 +27,7 @@ export default function DashboardPage() {
       <div className="panel" style={{ textAlign: "left" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div className="mark" style={{ width: 34, height: 34, fontSize: 15, margin: 0 }}>1</div>
+            <img src="/logo-mark.png" alt="OneKYC" style={{ width: 34, height: 34 }} />
             <span style={{ fontWeight: 600, fontSize: 14 }}>OneKYC</span>
           </div>
           <button className="btn-ghost" style={{ border: "none", background: "none", color: "var(--muted)", fontSize: 12, cursor: "pointer" }} onClick={() => signOut()}>
