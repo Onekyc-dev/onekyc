@@ -9,7 +9,8 @@ export async function POST(request, { params }) {
     return Response.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const result = await runLivenessCheck({ userId: session.user.id });
+  const { imageBase64 } = await request.json();
+  const result = await runLivenessCheck({ imageBase64 });
 
   await updateVerificationSession(params.sessionId, {
     status: result.passed ? "liveness_passed" : "failed",
