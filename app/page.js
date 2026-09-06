@@ -20,7 +20,7 @@ export default function LandingPage() {
   return (
     <main className="screen">
       <div className="panel">
-        <div className="mark">1</div>
+        <img src="/logo-mark.png" alt="OneKYC" style={{ width: 64, height: 64, margin: "0 auto 14px", display: "block" }} />
         <h1 className="title">OneKYC</h1>
         <p className="tagline">VERIFY ONCE. TRUST EVERYWHERE.</p>
 
