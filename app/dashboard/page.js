@@ -39,6 +39,7 @@ export default function DashboardPage() {
           <div>
             <p style={{ fontWeight: 600, fontSize: 14 }}>Verified</p>
             <p style={{ fontSize: 12 }}>Since {session.user.verifiedAt ? new Date(session.user.verifiedAt).toLocaleDateString() : "today"}</p>
+            <p style={{ fontSize: 11, marginTop: 4, opacity: 0.7 }}>{session.user.oneKycId}</p>
           </div>
         </div>
 
