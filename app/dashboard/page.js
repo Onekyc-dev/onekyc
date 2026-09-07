@@ -29,17 +29,52 @@ export default function DashboardPage() {
 
   return (
     <AppShell email={session.user.email}>
-      <div className="status-banner">
-        <div>
-          <p style={{ fontWeight: 600, fontSize: 15, color: "var(--success)" }}>Verified</p>
-          <p style={{ fontSize: 12, color: "var(--success)" }}>
-            Since {session.user.verifiedAt ? new Date(session.user.verifiedAt).toLocaleDateString() : "today"}
-          </p>
+      {session.user.verified && (
+        <div className="status-banner">
+          <div>
+            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--success)" }}>Verified</p>
+            <p style={{ fontSize: 12, color: "var(--success)" }}>
+              Since {session.user.verifiedAt ? new Date(session.user.verifiedAt).toLocaleDateString() : ""}
+            </p>
+          </div>
+          <span style={{ fontSize: 11, fontFamily: "monospace", color: "var(--success)" }}>
+            {session.user.oneKycId}
+          </span>
         </div>
-        <span style={{ fontSize: 11, fontFamily: "monospace", color: "var(--success)" }}>
-          {session.user.oneKycId}
-        </span>
-      </div>
+      )}
+
+      {session.user.verificationStatus === "in_review" && (
+        <div className="status-banner" style={{ background: "rgba(212,175,55,0.1)" }}>
+          <div>
+            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--gold)" }}>In review</p>
+            <p style={{ fontSize: 12, color: "var(--gold)" }}>We&apos;re checking your submission — this can take a moment</p>
+          </div>
+        </div>
+      )}
+
+      {session.user.verificationStatus === "declined" && (
+        <div className="status-banner" style={{ background: "rgba(248,113,113,0.1)" }}>
+          <div>
+            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--danger)" }}>Needs resubmission</p>
+            <p style={{ fontSize: 12, color: "var(--danger)" }}>Your last attempt couldn&apos;t be confirmed — try again with a clearer photo</p>
+          </div>
+          <button className="btn btn-gold" style={{ width: "auto", padding: "8px 16px" }} onClick={() => router.push("/verify-prompt")}>
+            Resubmit
+          </button>
+        </div>
+      )}
+
+      {(!session.user.verified && session.user.verificationStatus === "none") && (
+        <div className="status-banner" style={{ background: "rgba(248,113,113,0.1)" }}>
+          <div>
+            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--danger)" }}>Not verified yet</p>
+            <p style={{ fontSize: 12, color: "var(--danger)" }}>Complete identity verification to unlock everything</p>
+          </div>
+          <button className="btn btn-gold" style={{ width: "auto", padding: "8px 16px" }} onClick={() => router.push("/verify-prompt")}>
+            Verify
+          </button>
+        </div>
+      )}
 
       <div className="stat-grid">
         <div className="stat-card">
