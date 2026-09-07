@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { markUserVerified } from "../../../../lib/db";
+import { markUserVerified, updateVerificationStatus } from "../../../../lib/db";
 
 function isSignatureValid(rawBody, signatureHeader) {
   if (!process.env.DIDIT_WEBHOOK_SECRET) return false;
@@ -20,6 +20,14 @@ function isSignatureValid(rawBody, signatureHeader) {
   }
 }
 
+// Maps Didit's status strings to our own simplified states.
+function toInternalStatus(diditStatus) {
+  if (diditStatus === "Approved") return "verified";
+  if (diditStatus === "Declined") return "declined";
+  if (diditStatus === "In Review") return "in_review";
+  return "none";
+}
+
 export async function POST(request) {
   const rawBody = await request.text();
   const signature = request.headers.get("x-signature");
@@ -32,8 +40,12 @@ export async function POST(request) {
   const email = payload.vendor_data;
   const status = payload.status;
 
-  if (status === "Approved" && email) {
+  if (!email) return Response.json({ received: true });
+
+  if (status === "Approved") {
     await markUserVerified(email);
+  } else {
+    await updateVerificationStatus(email, toInternalStatus(status));
   }
 
   return Response.json({ received: true });
