@@ -1,48 +1,56 @@
 import crypto from "crypto";
 import { markUserVerified, updateVerificationStatus } from "../../../../lib/db";
 
-function isSignatureValid(rawBody, signatureHeader) {
-  if (!process.env.DIDIT_WEBHOOK_SECRET) return false;
-  if (!signatureHeader) return false;
+function stripSecretPrefix(secret) {
+  return secret.startsWith("whsec_") ? secret.slice(6) : secret;
+}
 
-  const expected = crypto
-    .createHmac("sha256", process.env.DIDIT_WEBHOOK_SECRET)
-    .update(rawBody)
-    .digest("hex");
+function isSignatureValid({ timestamp, sessionId, status, webhookType, signatureHeader }) {
+  if (!process.env.DIDIT_WEBHOOK_SECRET) return false;
+  if (!signatureHeader || !timestamp) return false;
+
+  // Reject stale/replayed deliveries older than 5 minutes.
+  const age = Math.abs(Date.now() / 1000 - Number(timestamp));
+  if (age > 300) return false;
+
+  const secret = stripSecretPrefix(process.env.DIDIT_WEBHOOK_SECRET);
+  const signedString = `${timestamp}:${sessionId}:${status}:${webhookType}`;
+  const expected = crypto.createHmac("sha256", secret).update(signedString).digest("hex");
 
   try {
-    return crypto.timingSafeEqual(
-      Buffer.from(signatureHeader),
-      Buffer.from(expected)
-    );
+    return crypto.timingSafeEqual(Buffer.from(signatureHeader), Buffer.from(expected));
   } catch {
     return false;
   }
 }
 
-// Maps Didit's status strings to our own simplified states.
 function toInternalStatus(diditStatus) {
-  if (diditStatus === "Approved") return "verified";
-  if (diditStatus === "Declined") return "declined";
-  if (diditStatus === "In Review") return "in_review";
+  const s = (diditStatus ?? "").toUpperCase();
+  if (s === "APPROVED") return "verified";
+  if (s === "DECLINED") return "declined";
+  if (s === "IN_REVIEW") return "in_review";
   return "none";
 }
 
 export async function POST(request) {
   const rawBody = await request.text();
-  const signature = request.headers.get("x-signature");
+  const payload = JSON.parse(rawBody);
 
-  if (!isSignatureValid(rawBody, signature)) {
+  const timestamp = request.headers.get("x-timestamp");
+  const signature = request.headers.get("x-signature-simple");
+  const webhookType = payload.event;
+  const sessionId = payload.data?.session_id;
+  const status = payload.data?.status;
+  const email = payload.data?.vendor_data;
+
+  const valid = isSignatureValid({ timestamp, sessionId, status, webhookType, signatureHeader: signature });
+  if (!valid) {
     return Response.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  const payload = JSON.parse(rawBody);
-  const email = payload.vendor_data;
-  const status = payload.status;
-
   if (!email) return Response.json({ received: true });
 
-  if (status === "Approved") {
+  if (status?.toUpperCase() === "APPROVED") {
     await markUserVerified(email);
   } else {
     await updateVerificationStatus(email, toInternalStatus(status));
