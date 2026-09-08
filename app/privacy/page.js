@@ -21,17 +21,27 @@ export default function PrivacyPage() {
         </p>
       </div>
 
-      <div className="phase-card">
-        <p className="phase-title">What we don&apos;t collect</p>
+     <div className="phase-card">
+        <p className="phase-title">What we don&apos;t store</p>
         <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.7 }}>
-          OneKYC never stores your ID documents, photos, selfies, or any
-          biometric data. Document scans and liveness checks are processed
-          entirely by our verification provider, Didit — we only ever
-          receive a verified / not-verified result back, not the underlying
-          documents or images.
+          OneKYC&apos;s own systems never store your ID documents, photos,
+          selfies, or biometric data — our database only ever receives a
+          verified / not-verified result, never the underlying documents
+          or images.
         </p>
       </div>
 
+      <div className="phase-card">
+        <p className="phase-title">Human review access</p>
+        <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.7 }}>
+          Document scans, selfies, and location data are processed by our
+          verification provider, Didit. Authorized OneKYC personnel can
+          access this data through Didit&apos;s console for manual review —
+          for example, when a submission is unclear or flagged for
+          additional checks. This access is limited to what&apos;s needed
+          for review and is not stored in OneKYC&apos;s own database.
+        </p>
+      </div>
       <div className="phase-card">
         <p className="phase-title">Third-party processors</p>
         <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.7 }}>
