@@ -40,6 +40,11 @@ export default function LandingPage() {
           By continuing you agree to complete identity verification. Not a
           licensed exchange or custodian.
         </p>
+        <p className="muted" style={{ marginTop: 8 }}>
+          <a href="/privacy" style={{ textDecoration: "underline" }}>Privacy policy</a>
+          {" · "}
+          <a href="/terms" style={{ textDecoration: "underline" }}>Terms of service</a>
+        </p>
       </div>
     </main>
   );
