@@ -79,7 +79,7 @@ export default function TermsPage() {
       <div className="phase-card">
         <p className="phase-title">Contact</p>
         <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.7 }}>
-          Questions about these terms can be sent to [your contact email].
+          Questions about these terms can be sent to [onekyc2026@gmail.com].
         </p>
       </div>
     </AppShell>
