@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { markUserVerified, updateVerificationStatus } from "../../../../lib/db";
+import { sendVerificationResultEmail } from "../../../../lib/email";
 
 function stripSecretPrefix(secret) {
   return secret.startsWith("whsec_") ? secret.slice(6) : secret;
@@ -50,9 +51,16 @@ export async function POST(request) {
 
   if (!email) return Response.json({ received: true });
 
-  if (status?.toUpperCase() === "APPROVED") {
+  const upperStatus = status?.toUpperCase();
+
+  if (upperStatus === "APPROVED") {
     await markUserVerified(email);
+    await sendVerificationResultEmail(email, true);
+  } else if (upperStatus === "DECLINED") {
+    await updateVerificationStatus(email, toInternalStatus(status));
+    await sendVerificationResultEmail(email, false);
   } else {
+    // In review / other intermediate states — update status, no email yet.
     await updateVerificationStatus(email, toInternalStatus(status));
   }
 
