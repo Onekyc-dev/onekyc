@@ -1,12 +1,14 @@
-"use client";
-
-import { useSession } from "next-auth/react";
-import AppShell from "../../components/AppShell";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function PrivacyPage() {
-  const { data: session } = useSession();
   return (
-    <AppShell email={session?.user?.email}>
+    <main style={{ maxWidth: 640, margin: "0 auto", padding: "24px 20px 60px" }}>
+      <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
+        <Image src="/logo-mark.png" alt="" width={28} height={28} />
+        <span style={{ fontWeight: 600, fontSize: 14 }}>OneKYC</span>
+      </Link>
+
       <h1 className="page-title">Privacy policy</h1>
       <p className="page-intro">Last updated: September 2026</p>
 
@@ -21,7 +23,7 @@ export default function PrivacyPage() {
         </p>
       </div>
 
-     <div className="phase-card">
+      <div className="phase-card">
         <p className="phase-title">What we don&apos;t store</p>
         <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.7 }}>
           OneKYC&apos;s own systems never store your ID documents, photos,
@@ -42,6 +44,7 @@ export default function PrivacyPage() {
           for review and is not stored in OneKYC&apos;s own database.
         </p>
       </div>
+
       <div className="phase-card">
         <p className="phase-title">Third-party processors</p>
         <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.7 }}>
@@ -83,6 +86,6 @@ export default function PrivacyPage() {
         OneKYC is currently in beta. This policy will be expanded as the
         product develops.
       </p>
-    </AppShell>
+    </main>
   );
 }
