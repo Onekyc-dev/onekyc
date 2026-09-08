@@ -1,12 +1,14 @@
-"use client";
-
-import { useSession } from "next-auth/react";
-import AppShell from "../../components/AppShell";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function TermsPage() {
-  const { data: session } = useSession();
   return (
-    <AppShell email={session?.user?.email}>
+    <main style={{ maxWidth: 640, margin: "0 auto", padding: "24px 20px 60px" }}>
+      <Link href="/" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
+        <Image src="/logo-mark.png" alt="" width={28} height={28} />
+        <span style={{ fontWeight: 600, fontSize: 14 }}>OneKYC</span>
+      </Link>
+
       <h1 className="page-title">Terms of service</h1>
       <p className="page-intro">Last updated: September 2026</p>
 
@@ -82,6 +84,6 @@ export default function TermsPage() {
           Questions about these terms can be sent to [onekyc2026@gmail.com].
         </p>
       </div>
-    </AppShell>
+    </main>
   );
 }
