@@ -44,10 +44,26 @@ export async function POST(request) {
   const status = payload.data?.status;
   const email = payload.data?.vendor_data;
 
+  // TEMP DEBUG — remove once signature verification is confirmed working.
+  console.log("Webhook debug:", {
+    allHeaders: Object.fromEntries(request.headers.entries()),
+    payloadTopLevelKeys: Object.keys(payload),
+    payloadDataKeys: payload.data ? Object.keys(payload.data) : null,
+    timestamp,
+    signatureReceived: signature,
+    webhookType,
+    sessionId,
+    status,
+    hasEmail: !!email,
+  });
+
   const valid = isSignatureValid({ timestamp, sessionId, status, webhookType, signatureHeader: signature });
+
   if (!valid) {
+    console.log("Signature mismatch — rejecting.");
     return Response.json({ error: "Invalid signature" }, { status: 401 });
   }
+
 
   if (!email) return Response.json({ received: true });
 
