@@ -2,26 +2,25 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AppShell from "../../components/AppShell";
 
 export default function DashboardPage() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
   const [history, setHistory] = useState([]);
+  const hasSyncedRef = useRef(false);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/");
   }, [status, router]);
 
-  // Always re-sync with the database on arrival, so a stale cached
-  // session (e.g. from the processing screen giving up early) doesn't
-  // show outdated status.
   useEffect(() => {
-    if (status === "authenticated") update();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
-
+    if (status === "authenticated" && !hasSyncedRef.current) {
+      hasSyncedRef.current = true;
+      update();
+    }
+  }, [status, update]);
 
   useEffect(() => {
     if (status !== "authenticated") return;
