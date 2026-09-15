@@ -60,7 +60,17 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {session.user.verificationStatus === "flagged" && (
+        <div className="status-banner" style={{ background: "rgba(212,175,55,0.1)" }}>
+          <div>
+            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--gold)" }}>Under review</p>
+            <p style={{ fontSize: 12, color: "var(--gold)" }}>Your verification needs a closer look — we&apos;ll update you soon</p>
+          </div>
+        </div>
+      )}
+
       {session.user.verificationStatus === "declined" && (
+
         <div className="status-banner" style={{ background: "rgba(248,113,113,0.1)" }}>
           <div>
             <p style={{ fontWeight: 600, fontSize: 15, color: "var(--danger)" }}>Needs resubmission</p>
