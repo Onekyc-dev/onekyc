@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { markUserVerified, updateVerificationStatus } from "../../../../lib/db";
+import { markUserVerified, updateVerificationStatus, getPool } from "../../../../lib/db";
 import { sendVerificationResultEmail } from "../../../../lib/email";
 
 function stripSecretPrefix(secret) {
@@ -50,9 +50,22 @@ export async function POST(request) {
 
   if (!email) return Response.json({ received: true });
 
+  // Face Search 1:N runs automatically inside every liveness check.
+  // A duplicate match doesn't auto-decline on Didit's side — we decide
+  // what to do with it. Here: hold for manual review instead of
+  // auto-verifying, so the same person can't quietly rack up multiple
+  // OneKYC accounts.
+  const faceSearch = payload.decision?.face_search;
+  const duplicateFound = (faceSearch?.total_matches ?? 0) > 0;
+
   const upperStatus = status?.toUpperCase();
 
-  if (upperStatus === "APPROVED") {
+  if (duplicateFound) {
+    await getPool().query(
+      "update users set verification_status = 'flagged', flagged_duplicate = true where email = $1",
+      [email]
+    );
+  } else if (upperStatus === "APPROVED") {
     await markUserVerified(email);
     await sendVerificationResultEmail(email, true);
   } else if (upperStatus === "DECLINED") {
