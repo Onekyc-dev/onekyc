@@ -44,8 +44,6 @@ export default function VerifyRequestPage() {
     );
   }
 
-  const returnTo = `/verify/${sessionId}`;
-
   return (
     <main className="screen">
       <div className="panel">
@@ -59,32 +57,18 @@ export default function VerifyRequestPage() {
           Returning to: {vSession.redirectUri}
         </p>
 
-        {status === "authenticated" && session.user.verified && (
-          <button className="btn btn-gold" onClick={() => router.push(`/verify/${sessionId}/liveness`)}>
+        {status === "authenticated" ? (
+          <button
+            className="btn btn-gold"
+            onClick={() => router.push(`/verify/${sessionId}/liveness`)}
+          >
             Continue
           </button>
-        )}
- 
-        {status === "authenticated" && !session.user.verified && (
-          <>
-            <p className="sub" style={{ marginBottom: 16 }}>
-              You&apos;ll need to complete OneKYC verification first.
-            </p>
-            <button
-              className="btn btn-gold"
-              onClick={() => router.push(`/verify-prompt?returnTo=${encodeURIComponent(returnTo)}`)}
-            >
-              Complete verification
-            </button>
-          </>
-        )}
-
-        {status !== "authenticated" && (
-          <button className="btn btn-gold" onClick={() => signIn("google", { callbackUrl: returnTo })}>
+        ) : (
+          <button className="btn btn-gold" onClick={() => signIn("google")}>
             Sign in to continue
           </button>
         )}
-
         <button
           className="btn btn-ghost"
           style={{ marginTop: 8 }}
