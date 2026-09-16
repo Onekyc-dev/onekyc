@@ -3,7 +3,7 @@ import { authOptions } from "../../../../lib/auth";
 import { startDiditKyc } from "../../../../lib/didit";
 import { markUserVerified } from "../../../../lib/db";
 
-export async function POST() {
+export async function POST(request) {
   const session = await getServerSession(authOptions);
   if (!session) {
     return Response.json({ error: "Not signed in" }, { status: 401 });
