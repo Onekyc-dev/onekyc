@@ -10,40 +10,40 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (status !== "authenticated") return;
-    if (session.user.verified) {
-      router.push("/dashboard");
-    } else {
-      router.push("/verify-prompt");
-    }
+    if (session.user.verified) router.push("/dashboard");
+    else router.push("/verify-prompt");
   }, [status, session, router]);
 
   return (
-    <main className="screen">
-      <div className="panel">
-        <img src="/logo-mark.png" alt="OneKYC" style={{ width: 64, height: 64, margin: "0 auto 14px", display: "block" }} />
-        <h1 className="title">OneKYC</h1>
-        <p className="tagline">VERIFY ONCE. TRUST EVERYWHERE.</p>
+    <main className="screen landing-screen">
+      <div className="gold-art" aria-hidden="true">
+        <div className="globe" />
+        <span className="wave" /><span className="wave" /><span className="wave" />
+        <span className="wave" /><span className="wave" />
+      </div>
 
-        <button
-          className="btn btn-gold"
-          onClick={() => signIn("google")}
-          disabled={status === "loading"}
-        >
-          Continue with Google
-        </button>
+      <div className="screen-inner">
+        <div className="auth-top">
+          <img className="auth-wordmark" src="/logo-wordmark.png" alt="OneKYC — Verify Once. Trust Everywhere." />
+        </div>
 
-        <p className="sub" style={{ marginTop: 16 }}>
-          You&apos;ll verify your ID once with Didit, then reuse it anywhere.
-        </p>
+        <div className="hero-copy">
+          <p className="eyebrow">Portable identity infrastructure</p>
+          <h1 className="hero-title">Your identity.<br /><span className="gold">Your control.</span></h1>
+          <p className="hero-sub">One verification. A lifetime of access. Your KYC, your way.</p>
+        </div>
 
-        <p className="muted" style={{ marginTop: 24 }}>
-          By continuing you agree to complete identity verification. Not a
-          licensed exchange or custodian.
-        </p>
-        <p className="muted" style={{ marginTop: 8 }}>
-          <a href="/privacy" style={{ textDecoration: "underline" }}>Privacy policy</a>
-          {" · "}
-          <a href="/terms" style={{ textDecoration: "underline" }}>Terms of service</a>
+        <div className="auth-actions">
+          <button className="btn btn-gold" onClick={() => signIn("google")} disabled={status === "loading"}>
+            Get started <span className="btn-arrow">→</span>
+          </button>
+          <button className="btn btn-ghost" onClick={() => signIn("google")} disabled={status === "loading"}>
+            Sign in
+          </button>
+        </div>
+
+        <p className="consent">
+          By continuing you agree to our <a href="/terms">Terms of service</a> and <a href="/privacy">Privacy policy</a>.
         </p>
       </div>
     </main>
