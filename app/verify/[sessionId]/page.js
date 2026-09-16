@@ -64,7 +64,7 @@ export default function VerifyRequestPage() {
             Continue
           </button>
         )}
-
+ 
         {status === "authenticated" && !session.user.verified && (
           <>
             <p className="sub" style={{ marginBottom: 16 }}>
