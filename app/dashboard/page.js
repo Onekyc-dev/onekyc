@@ -40,12 +40,12 @@ export default function DashboardPage() {
       {session.user.verified && (
         <div className="status-banner">
           <div>
-            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--success)" }}>Verified</p>
-            <p style={{ fontSize: 12, color: "var(--success)" }}>
+            <p className="status-title">Verified</p>
+            <p className="status-sub">
               Since {session.user.verifiedAt ? new Date(session.user.verifiedAt).toLocaleDateString() : ""}
             </p>
           </div>
-          <span style={{ fontSize: 11, fontFamily: "monospace", color: "var(--success)" }}>
+          <span className="status-id">
             {session.user.oneKycId}
           </span>
         </div>
@@ -54,8 +54,8 @@ export default function DashboardPage() {
       {session.user.verificationStatus === "in_review" && (
         <div className="status-banner" style={{ background: "rgba(212,175,55,0.1)" }}>
           <div>
-            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--gold)" }}>In review</p>
-            <p style={{ fontSize: 12, color: "var(--gold)" }}>We&apos;re checking your submission — this can take a moment</p>
+            <p className="status-title" style={{ color: "var(--gold)" }}>In review</p>
+            <p className="status-sub" style={{ color: "var(--gold)" }}>We&apos;re checking your submission — this can take a moment</p>
           </div>
         </div>
       )}
@@ -63,8 +63,8 @@ export default function DashboardPage() {
       {session.user.verificationStatus === "flagged" && (
         <div className="status-banner" style={{ background: "rgba(212,175,55,0.1)" }}>
           <div>
-            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--gold)" }}>Under review</p>
-            <p style={{ fontSize: 12, color: "var(--gold)" }}>Your verification needs a closer look — we&apos;ll update you soon</p>
+            <p className="status-title" style={{ color: "var(--gold)" }}>Under review</p>
+            <p className="status-sub" style={{ color: "var(--gold)" }}>Your verification needs a closer look — we&apos;ll update you soon</p>
           </div>
         </div>
       )}
@@ -73,8 +73,8 @@ export default function DashboardPage() {
 
         <div className="status-banner" style={{ background: "rgba(248,113,113,0.1)" }}>
           <div>
-            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--danger)" }}>Needs resubmission</p>
-            <p style={{ fontSize: 12, color: "var(--danger)" }}>Your last attempt couldn&apos;t be confirmed — try again with a clearer photo</p>
+            <p className="status-title" style={{ color: "var(--danger)" }}>Needs resubmission</p>
+            <p className="status-sub" style={{ color: "var(--danger)" }}>Your last attempt couldn&apos;t be confirmed — try again with a clearer photo</p>
           </div>
           <button className="btn btn-gold" style={{ width: "auto", padding: "8px 16px" }} onClick={() => router.push("/verify-prompt")}>
             Resubmit
@@ -85,8 +85,8 @@ export default function DashboardPage() {
       {(!session.user.verified && session.user.verificationStatus === "none") && (
         <div className="status-banner" style={{ background: "rgba(248,113,113,0.1)" }}>
           <div>
-            <p style={{ fontWeight: 600, fontSize: 15, color: "var(--danger)" }}>Not verified yet</p>
-            <p style={{ fontSize: 12, color: "var(--danger)" }}>Complete identity verification to unlock everything</p>
+            <p className="status-title" style={{ color: "var(--danger)" }}>Not verified yet</p>
+            <p className="status-sub" style={{ color: "var(--danger)" }}>Complete identity verification to unlock everything</p>
           </div>
           <button className="btn btn-gold" style={{ width: "auto", padding: "8px 16px" }} onClick={() => router.push("/verify-prompt")}>
             Verify
@@ -94,6 +94,7 @@ export default function DashboardPage() {
         </div>
       )}
 
+      <div className="dashboard-main">
       <div className="stat-grid">
         <div className="stat-card">
           <p className="stat-label">dApps verified with</p>
@@ -110,7 +111,7 @@ export default function DashboardPage() {
           <p className="teaser-title">Share my identity</p>
           <p className="teaser-sub">Coming soon</p>
         </div>
-        <span style={{ fontSize: 20 }}>▦</span>
+        <span className="teaser-icon">▦</span>
       </div>
 
       <div className="teaser-card">
@@ -118,7 +119,7 @@ export default function DashboardPage() {
           <p className="teaser-title">Developer API</p>
           <p className="teaser-sub">Coming soon</p>
         </div>
-        <span style={{ fontSize: 20 }}>{"</>"}</span>
+        <span className="teaser-icon">&lt;/&gt;</span>
       </div>
 
       <p className="section-label">Verification history</p>
@@ -132,6 +133,7 @@ export default function DashboardPage() {
           <span style={{ color: "var(--success)" }}>✓</span>
         </div>
       ))}
+      </div>
     </AppShell>
   );
 }
