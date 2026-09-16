@@ -1,12 +1,14 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function VerifyPromptPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const [starting, setStarting] = useState(false);
 
   if (status === "loading") return null;
@@ -17,13 +19,18 @@ export default function VerifyPromptPage() {
 
   async function handleStartKyc() {
     setStarting(true);
-    const res = await fetch("/api/kyc/start", { method: "POST" });
+    const res = await fetch("/api/kyc/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ returnTo }),
+    });
     const data = await res.json();
 
     if (data.url) {
       window.location.href = data.url;
     } else {
-      router.push("/kyc-processing");
+      const suffix = returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : "";
+      router.push(`/kyc-processing${suffix}`);
     }
   }
 
