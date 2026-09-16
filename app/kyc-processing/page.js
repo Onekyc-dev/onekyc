@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const MAX_POLLS = 12;
@@ -10,6 +10,9 @@ const POLL_INTERVAL_MS = 2000;
 export default function KycProcessingPage() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo") || "/dashboard";
+
   const [state, setState] = useState("processing");
   const attemptsRef = useRef(0);
 
