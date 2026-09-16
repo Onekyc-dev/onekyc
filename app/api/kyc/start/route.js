@@ -9,7 +9,8 @@ export async function POST() {
     return Response.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const result = await startDiditKyc({ email: session.user.email });
+  const { returnTo } = await request.json().catch(() => ({}));
+    const result = await startDiditKyc({ email: session.user.email, returnTo });
 
   if (result.mock) {
     await markUserVerified(session.user.email);
