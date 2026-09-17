@@ -31,7 +31,7 @@ export default function VerifyPromptPage() {
       </div>
 
       <div className="screen-inner auth-card">
-        <button className="auth-back" aria-label="Go back" onClick={() => router.push("/")}>←</button>
+        <button className="auth-back" aria-label="Sign out" onClick={() => signOut()}>←</button>
         <div className="auth-top" style={{ justifyContent: "flex-start", marginBottom: 26 }}>
           <img className="auth-logo" src="/logo-mark.png" alt="OneKYC" />
         </div>
