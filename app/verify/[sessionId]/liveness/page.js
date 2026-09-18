@@ -36,7 +36,15 @@ export default function LivenessPage() {
         video: { facingMode: "user" },
       });
       streamRef.current = stream;
-      if (videoRef.current) videoRef.current.srcObject = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        try {
+          await videoRef.current.play();
+        } catch {
+          // Some browsers throw if play() races with srcObject assignment —
+          // the video usually still starts via the autoPlay attribute.
+        }
+      }
       setState("ready");
     } catch {
       setFailReason("camera_denied");
