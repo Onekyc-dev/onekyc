@@ -18,9 +18,9 @@ export default function LivenessPage() {
   const [state, setState] = useState("starting");
   const [failReason, setFailReason] = useState(null);
   const [attempts, setAttempts] = useState(1);
+  const [debugInfo, setDebugInfo] = useState("");
   const videoRef = useRef(null);
   const streamRef = useRef(null);
-  const [debugInfo, setDebugInfo] = useState("");
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -32,13 +32,14 @@ export default function LivenessPage() {
   }, [status]);
 
   async function startCamera() {
+    setState("starting");
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user" },
       });
       streamRef.current = stream;
       const track = stream.getVideoTracks()[0];
-      setDebugInfo(`track: ${track?.label || "none"} | readyState: ${track?.readyState}`);
+      setDebugInfo(`track: ${track?.label || "none"} | readyState: ${track?.readyState} | videoRef: ${videoRef.current ? "present" : "NULL"}`);
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -55,7 +56,6 @@ export default function LivenessPage() {
       setState("failed");
     }
   }
-
 
   function capturePhoto() {
     const video = videoRef.current;
@@ -91,30 +91,34 @@ export default function LivenessPage() {
   return (
     <main className="screen">
       <div className="panel">
+        <p style={{ fontWeight: 600, fontSize: 15, marginBottom: 10 }}>Liveness check</p>
+
+        {/* Always mounted — never conditional — so videoRef is never null when the stream arrives. */}
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          onLoadedMetadata={(e) =>
+            setDebugInfo((d) => `${d} | video: ${e.target.videoWidth}x${e.target.videoHeight}`)
+          }
+          style={{
+            width: "100%",
+            borderRadius: 12,
+            marginBottom: 8,
+            transform: "scaleX(-1)",
+            background: "#000",
+            display: state === "failed" ? "none" : "block",
+          }}
+        />
+        {debugInfo && state !== "failed" && (
+          <p style={{ fontSize: 10, color: "var(--muted)", marginBottom: 16, wordBreak: "break-word" }}>
+            {debugInfo}
+          </p>
+        )}
+
         {(state === "starting" || state === "ready" || state === "checking") && (
           <>
-            <p style={{ fontWeight: 600, fontSize: 15, marginBottom: 10 }}>Liveness check</p>
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              onLoadedMetadata={(e) =>
-                setDebugInfo((d) => `${d} | video: ${e.target.videoWidth}x${e.target.videoHeight}`)
-              }
-              style={{
-                width: "100%",
-                borderRadius: 12,
-                marginBottom: 8,
-                transform: "scaleX(-1)",
-                background: "#000",
-              }}
-            />
-            {debugInfo && (
-              <p style={{ fontSize: 10, color: "var(--muted)", marginBottom: 16, wordBreak: "break-word" }}>
-                {debugInfo}
-              </p>
-            )}
             <p className="sub" style={{ marginBottom: 16 }}>
               Center your face in the frame, then tap below.
             </p>
@@ -123,7 +127,7 @@ export default function LivenessPage() {
               onClick={handleCheck}
               disabled={state !== "ready"}
             >
-              {state === "checking" ? "Checking…" : "Check my identity"}
+              {state === "checking" ? "Checking…" : state === "starting" ? "Starting camera…" : "Check my identity"}
             </button>
           </>
         )}
@@ -143,7 +147,7 @@ export default function LivenessPage() {
             >
               Try again
             </button>
-            <p className="muted" style={{ marginTop: 10 }}>Attempt {attempts} of 3</p>
+            <p className="muted" style={{ marginTop: 10 }}>Attempt {Math.min(attempts, 3)} of 3</p>
           </>
         )}
       </div>
