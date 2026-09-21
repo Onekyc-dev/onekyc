@@ -20,6 +20,7 @@ export default function LivenessPage() {
   const [attempts, setAttempts] = useState(1);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
+  const [debugInfo, setDebugInfo] = useState("");
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -98,14 +99,22 @@ export default function LivenessPage() {
               autoPlay
               playsInline
               muted
+              onLoadedMetadata={(e) =>
+                setDebugInfo((d) => `${d} | video: ${e.target.videoWidth}x${e.target.videoHeight}`)
+              }
               style={{
                 width: "100%",
                 borderRadius: 12,
-                marginBottom: 16,
+                marginBottom: 8,
                 transform: "scaleX(-1)",
                 background: "#000",
               }}
             />
+            {debugInfo && (
+              <p style={{ fontSize: 10, color: "var(--muted)", marginBottom: 16, wordBreak: "break-word" }}>
+                {debugInfo}
+              </p>
+            )}
             <p className="sub" style={{ marginBottom: 16 }}>
               Center your face in the frame, then tap below.
             </p>
