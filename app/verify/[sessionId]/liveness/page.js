@@ -36,21 +36,25 @@ export default function LivenessPage() {
         video: { facingMode: "user" },
       });
       streamRef.current = stream;
+      const track = stream.getVideoTracks()[0];
+      setDebugInfo(`track: ${track?.label || "none"} | readyState: ${track?.readyState}`);
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         try {
           await videoRef.current.play();
-        } catch {
-          // Some browsers throw if play() races with srcObject assignment —
-          // the video usually still starts via the autoPlay attribute.
+        } catch (playErr) {
+          setDebugInfo((d) => `${d} | play() error: ${playErr.message}`);
         }
       }
       setState("ready");
-    } catch {
+    } catch (err) {
+      setDebugInfo(`getUserMedia error: ${err.name} — ${err.message}`);
       setFailReason("camera_denied");
       setState("failed");
     }
   }
+
 
   function capturePhoto() {
     const video = videoRef.current;
